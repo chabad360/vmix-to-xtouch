@@ -3,3 +3,5 @@
 This is quite literally provided without warranty, so if you want new features or bug fixes, 
 you'll get them quicker if you try to create it yourself and make a PR.
 Otherwise, feel free to open an issue and I'll get to it eventually.
+
+Also, make sure to renable the activators in vmix to guarantee that they sync.
