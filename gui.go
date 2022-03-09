@@ -3,13 +3,14 @@ package main
 import (
 	_ "embed"
 	"fmt"
+	"runtime"
+
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/data/validation"
 	"fyne.io/fyne/v2/dialog"
 	"fyne.io/fyne/v2/widget"
 	driver "gitlab.com/gomidi/rtmididrv"
-	"runtime"
 )
 
 func gui() {
@@ -31,21 +32,31 @@ func gui() {
 
 	xtouchIn := widget.NewSelectEntry(ins)
 	xtouchIn.Validator = listValidator(ins)
+	xtouchIn.Text = a.Preferences().String("xtouchin")
+
 	xtouchOut := widget.NewSelectEntry(outs)
 	xtouchOut.Validator = listValidator(outs)
+	xtouchOut.Text = a.Preferences().String("xtouchout")
 
 	activator := widget.NewSelectEntry(ins)
 	activator.Validator = listValidator(ins)
+	activator.Text = a.Preferences().String("activator")
+
 	shortcut := widget.NewSelectEntry(outs)
 	shortcut.Validator = listValidator(outs)
+	shortcut.Text = a.Preferences().String("shortcut")
 
 	refreshButton := widget.NewButton("Refresh List", func() {
 		ins, outs = insAndOuts(drv)
 		xtouchIn.SetOptions(ins)
+		xtouchIn.Validator = listValidator(ins)
 		xtouchOut.SetOptions(outs)
+		xtouchOut.Validator = listValidator(outs)
 
 		activator.SetOptions(ins)
+		activator.Validator = listValidator(ins)
 		shortcut.SetOptions(outs)
+		shortcut.Validator = listValidator(outs)
 	})
 
 	form := &widget.Form{
@@ -85,12 +96,14 @@ func gui() {
 
 		if f, ok := getInList(activator.Text, ins); ok {
 			Activator = i[f]
+			a.Preferences().SetString("activator", activator.Text)
 		} else {
 			infoLabel.ParseMarkdown("Forwarding Errored")
 			return
 		}
 		if f, ok := getInList(shortcut.Text, outs); ok {
 			Shortcut = o[f]
+			a.Preferences().SetString("shortcut", shortcut.Text)
 		} else {
 			infoLabel.ParseMarkdown("Forwarding Errored")
 			return
@@ -98,12 +111,14 @@ func gui() {
 
 		if f, ok := getInList(xtouchIn.Text, ins); ok {
 			XTouchIn = i[f]
+			a.Preferences().SetString("xtouchin", xtouchIn.Text)
 		} else {
 			infoLabel.ParseMarkdown("Forwarding Errored")
 			return
 		}
 		if f, ok := getInList(xtouchOut.Text, outs); ok {
 			XTouchOut = o[f]
+			a.Preferences().SetString("xtouchout", xtouchOut.Text)
 		} else {
 			infoLabel.ParseMarkdown("Forwarding Errored")
 			return
